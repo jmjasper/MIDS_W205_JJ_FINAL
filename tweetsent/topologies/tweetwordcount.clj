@@ -12,7 +12,7 @@
           )
     }
     ;; bolt configuration
-{"Db-tweet-bolt" (python-bolt-spec
+{"Db-bolt" (python-bolt-spec
           options
           {"Tweet-spout" :shuffle}
           "bolts.Db.Db"

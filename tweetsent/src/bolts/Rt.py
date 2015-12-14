@@ -6,6 +6,18 @@ import re
 from streamparse.bolt import Bolt
 
 class Rt(Bolt):
-
-    def process(self, tup):
+	
+	def process(self, tup):
         
+		value = tup.value[0]
+		user = value.user
+
+
+
+	        try:
+
+	        	#Do not change below!
+			self.log(user)
+		    	self.emit([tup])
+		except:
+			pass

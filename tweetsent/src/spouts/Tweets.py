@@ -7,6 +7,8 @@ import json
 
 from streamparse.spout import Spout
 
+#import psycopg2
+
 ################################################################################
 # Twitter credentials
 ################################################################################
@@ -73,13 +75,51 @@ class Tweets(Spout):
 
     def next_tuple(self):
         try:
+            #Read the queue
             tweet = self.queue().get(timeout = 0.1)
+            
+            #Text Componenets
+            sentence = tweet.text
+            created = tweet.created_at
+            reply_user_id = tweet.in_reply_to_user_id
+            reply_screename = tweet.in_reply_to_screen_name
+            reply_status = tweet.in_reply_to_status_id
+            retweeted = tweet.retweet_count
+
+            #User Components
+            user_id = tweet.user.id
+            screen_name = tweet.user.screen_name
+            name = tweet.user.name
+            location = tweet.user.location
+            lang = tweet.user.lang
+
+
+            #hashtags = tweet.entities.hashtags
 
             if tweet:
                 self.queue().task_done()
                 try:
-                	self.log(tweet)
-                	self.emit([tweet])
+                    #Tweet
+                    #self.log(tweet)
+
+                	#Text
+                    self.log(sentence)
+	            self.log(created)
+                    self.log(reply_user_id)
+                    self.log(reply_screename)
+                    self.log(reply_status)
+                    self.log(retweeted)
+
+                    #User_Id
+                    self.log(user_id)
+                    self.log(screen_name)
+                    self.log(name)
+                    self.log(location)
+                    self.log(lang)
+
+                    #Hashtags
+
+                    self.emit([tweet])
                 except:
                 	#self.log("Unicode Error!")
                 	pass

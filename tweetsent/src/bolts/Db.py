@@ -8,4 +8,13 @@ from streamparse.bolt import Bolt
 class Db(Bolt):
 
     def process(self, tup):
-        
+    		
+
+
+        	try:
+
+        		#Don't change below!
+	        	self.log(tup)
+	        	self.emit([tup])
+	    	except:
+	    		pass
