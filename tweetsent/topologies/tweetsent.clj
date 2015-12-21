@@ -2,7 +2,7 @@
   (:use     [streamparse.specs])
   (:gen-class))
 
-(defn wordcount [options]
+(defn tweetsent [options]
    [
     ;; spout configuration
     {"Tweet-spout" (python-spout-spec

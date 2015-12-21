@@ -4,6 +4,7 @@ import itertools, time
 import tweepy, copy 
 import Queue, threading
 import json
+from vaderSentiment.vaderSentiment import sentiment as vaderSentiment
 
 from streamparse.spout import Spout
 
@@ -65,7 +66,7 @@ class Tweets(Spout):
 
         # Create the stream and listen for english tweets add track to stream.filter to change what's being
         stream = tweepy.Stream(auth, listener, timeout=None)
-        stream.filter(languages=["en"], track=["disney"], async=True)
+        stream.filter(languages=["en"], track=["disney","The Force Awakens", "Star Wars"], async=True)
 
     def queue(self):
         return self._queue
@@ -80,6 +81,15 @@ class Tweets(Spout):
             
             #Text Componenets
             sentence = tweet.text
+
+            #Fix log
+
+            try:
+                vs = vaderSentiment(str(sentence))
+            except:
+                pass
+
+            #Tweet Details
             created = tweet.created_at
             reply_user_id = tweet.in_reply_to_user_id
             reply_screename = tweet.in_reply_to_screen_name
@@ -105,6 +115,10 @@ class Tweets(Spout):
                 	#Text
                     self.log(sentence)
 	            self.log(created)
+                    self.log(vs['neg'])
+                    self.log(vs['neu'])
+                    self.log(vs['pos'])
+                    self.log(vs['compound'])
                     self.log(reply_user_id)
                     self.log(reply_screename)
                     self.log(reply_status)
