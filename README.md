@@ -1,5 +1,14 @@
 # Introduction
 
+Sentiment is an important part of marketing efforts and strategic decision making. Real-time sentiment is becoming increasingly important in damage mitigation plans for firms.
+
+In this project, I've developed and deployed a real-time system to measure the sentiment of incoming tweets and score them. This data can then be displayed and analyzed for it's marketing value and campaign effectiveness measures.
+
+###Architecture
+
+This architecture is a simple but extensible Storm information processing system with an associated Postgres database. Information analysis is done by a Tableau database.
+
+The architecture is specifically designed to be flexible and extensible as the needs of consumers will develop as time goes on and they will want more sophiticated analysis of general twitter sentiment.
 
 ###Purpose
 
