@@ -8,7 +8,7 @@ from vaderSentiment.vaderSentiment import sentiment as vaderSentiment
 
 from streamparse.spout import Spout
 
-#import psycopg2
+import psycopg2
 
 ################################################################################
 # Twitter credentials
@@ -75,7 +75,8 @@ class Tweets(Spout):
         return self._tweepy_api
 
     def next_tuple(self):
-        try:
+        vs = {'pos':0,'neu':0,'neg':0,'compound':0}
+	try:
             #Read the queue
             tweet = self.queue().get(timeout = 0.1)
             
@@ -95,6 +96,10 @@ class Tweets(Spout):
             reply_screename = tweet.in_reply_to_screen_name
             reply_status = tweet.in_reply_to_status_id
             retweeted = tweet.retweet_count
+	    pos = vs['pos']
+	    neu = vs['neu']
+	    neg = vs['neg']
+	    comp = vs['compound']
 
             #User Components
             user_id = tweet.user.id
@@ -115,10 +120,10 @@ class Tweets(Spout):
                 	#Text
                     self.log(sentence)
 	            self.log(created)
-                    self.log(vs['neg'])
-                    self.log(vs['neu'])
-                    self.log(vs['pos'])
-                    self.log(vs['compound'])
+                    self.log(neg)
+                    self.log(neu)
+                    self.log(pos)
+                    self.log(comp)
                     self.log(reply_user_id)
                     self.log(reply_screename)
                     self.log(reply_status)
@@ -131,13 +136,25 @@ class Tweets(Spout):
                     self.log(location)
                     self.log(lang)
 
+		    #Write to db
+		   # conn = psycopg2.connect(database="sent", user="postgres", password="pass", host="localhost", port="5432")
+		   # cur = conn.cursor()
+        	   # cur.execute("INSERT INTO tweets (username,tweet,time,location,pos,neu,neg) VALUES (%s, %s, %s, %s, %s, %s, %s)", (screen_name, sentence, created, location, vs['pos'],vs['neu'],vs['neg']))
+        	   # conn.commit()
+        	   # conn.close()
+
                     #Hashtags
 
                     self.emit([tweet])
                 except:
                 	#self.log("Unicode Error!")
                 	pass
-                
+		conn = psycopg2.connect(database="sent", user="postgres", password="pass", host="localhost", port="5432")
+                cur = conn.cursor()
+                cur.execute("INSERT INTO tweets (username,tweet,time,location,pos,neu,neg,compound) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", ([screen_name], [sentence], created, [location], pos, neu, neg, comp))
+                conn.commit()
+                conn.close()
+ 
         except Queue.Empty:
             pass
             #self.log("Empty queue exception")

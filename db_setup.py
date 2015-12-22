@@ -1,1 +1,0 @@
-import pyscopg2
